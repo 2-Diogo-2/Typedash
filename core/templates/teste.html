@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>TypeDash - Teste de Digitação</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #282c34;
+      padding: 10px 20px;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo a {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+
+    .logo a:hover {
+      transform: scale(1.1);
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+    }
+
+    .nav-links li {
+      margin-left: 20px;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border: 2px solid transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      border: 2px solid #61dafb;
+      background-color: rgba(97, 218, 251, 0.1);
+    }
+
+    .teste-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .teste-box {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .texto-teste {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      color: #333;
+      background-color: #f9f9f9;
+      display: none;
+      user-select: none;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      display: none;
+    }
+
+    button {
+      background-color: #61dafb;
+      padding: 10px 20px;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+      margin: 5px;
+    }
+
+    button:hover {
+      background-color: #21a1f1;
+    }
+
+    .resultados {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      display: none;
+    }
+
+    .resultados p {
+      margin-bottom: 5px;
+    }
+
+    footer {
+      background-color: #282c34;
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .social-links {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .social-links li {
+      margin: 0 10px;
+    }
+
+    .social-links a {
+      color: #61dafb;
+      text-decoration: none;
+    }
+
+    /* Estilo para erros */
+    .erro {
+      color: red;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <a href="{% url 'home' %}">TypeDash</a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="{% url 'login' %}">Login</a></li>
+        <li><a href="{% url 'teste' %}">Teste de Digitação</a></li>
+        <li><a href="{% url 'dicas' %}">Dicas</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="teste-container">
+    <div class="teste-box">
+      <h2>Teste de Digitação</h2>
+
+      <button type="button" onclick="iniciarTeste()" id="btnIniciar">Iniciar Teste</button>
+
+      <div id="cronometro" style="display: none;">Tempo: 00:00</div>
+
+      <div id="textoParaDigitar" class="texto-teste"></div>
+
+      <input type="text" id="entradaUsuario" placeholder="Digite o texto aqui..." autocomplete="off">
+
+      <button type="button" style="display:none;" id="btnEnviar" onclick="enviarResultados()">Enviar Resultados</button>
+
+      <div id="resultados" class="resultados"></div>
+
+      <button type="button" id="btnNovoTeste" style="display: none;" onclick="reiniciarTeste()">Novo Teste</button>
+      <button type="button" id="btnVerResultados" style="display: none;" onclick="verResultados()">Ver Resultados Anteriores</button>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2024 TypeDash</p>
+      <p>Contatos:</p>
+      <ul class="social-links">
+        <li><a href="#">Email</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    const textos = [
+      "A raposa rápida pula sobre o cão preguiçoso.",
+      "Os pássaros cantam na árvore ao lado do rio.",
+      "O sol brilha forte no céu claro.",
+      "Eu gosto de programar e aprender coisas novas.",
+      "Hoje é um ótimo dia para praticar digitação.",
+      "A água do mar estava fria, mas refrescante.",
+      "O gato dormia tranquilamente na cadeira.",
+      "O vento suave balançava as folhas das árvores.",
+      "O cachorro brincava feliz no parque.",
+      "O livro estava cheio de aventuras emocionantes."
+    ];
+
+    let frases = [];
+    let fraseAtual = 0;
+    let erros = 0;
+    let intervaloCronometro;
+    let segundos = 0;
+    let minutos = 0;
+
+    function sortearFrases() {
+      frases = [];
+      const frasesUsadas = new Set();
+      while (frases.length < 5) {
+        const indiceAleatorio = Math.floor(Math.random() * textos.length);
+        if (!frasesUsadas.has(indiceAleatorio)) {
+          frases.push(textos[indiceAleatorio]);
+          frasesUsadas.add(indiceAleatorio);
+        }
+      }
+    }
+
+    function atualizarCronometro() {
+      segundos++;
+      if (segundos >= 60) {
+        segundos = 0;
+        minutos++;
+      }
+      const tempoFormatado = `Tempo: ${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+      document.getElementById("cronometro").textContent = tempoFormatado;
+    }
+
+    function iniciarTeste() {
+      document.getElementById("btnIniciar").style.display = "none";
+      document.getElementById("textoParaDigitar").style.display = "block";
+      document.getElementById("entradaUsuario").style.display = "block";
+      document.getElementById("cronometro").style.display = "block";
+      document.getElementById("entradaUsuario").focus();
+
+      sortearFrases();
+      mostrarProximaFrase();
+
+      intervaloCronometro = setInterval(atualizarCronometro, 1000);
+    }
+
+    function mostrarProximaFrase() {
+      if (fraseAtual < frases.length) {
+        document.getElementById("textoParaDigitar").textContent = frases[fraseAtual];
+        document.getElementById("entradaUsuario").value = "";
+        document.getElementById("entradaUsuario").classList.remove("erro");
+      } else {
+        finalizarTeste();
+      }
+    }
+
+    document.getElementById("entradaUsuario").addEventListener("input", function (e) {
+      const textoAtual = frases[fraseAtual];
+      const entrada = e.target.value;
+
+      if (entrada === textoAtual) {
+        fraseAtual++;
+        mostrarProximaFrase();
+      } else if (!textoAtual.startsWith(entrada)) {
+        e.target.classList.add("erro");
+        erros++;
+      } else {
+        e.target.classList.remove("erro");
+      }
+    });
+
+    function finalizarTeste() {
+      clearInterval(intervaloCronometro);
+      document.getElementById("entradaUsuario").style.display = "none";
+      document.getElementById("textoParaDigitar").style.display = "none";
+      document.getElementById("btnEnviar").style.display = "inline-block";
+      document.getElementById("btnNovoTeste").style.display = "inline-block";
+      document.getElementById("btnVerResultados").style.display = "inline-block";
+      document.getElementById("resultados").style.display = "block";
+      document.getElementById("resultados").innerHTML = `
+        <p>Tempo final: ${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}</p>
+        <p>Total de erros: ${erros}</p>
+      `;
+    }
+
+    function enviarResultados() {
+      alert("Resultados enviados para o banco de dados.");
+    }
+
+    function reiniciarTeste() {
+      fraseAtual = 0;
+      erros = 0;
+      segundos = 0;
+      minutos = 0;
+      document.getElementById("btnIniciar").style.display = "inline-block";
+      document.getElementById("btnEnviar").style.display = "none";
+      document.getElementById("btnNovoTeste").style.display = "none";
+      document.getElementById("btnVerResultados").style.display = "none";
+      document.getElementById("resultados").style.display = "none";
+      document.getElementById("cronometro").style.display = "none";
+    }
+
+    function verResultados() {
+      window.location.href = "{% url 'resultados' %}";
+    }
+  </script>
+</body>
+
+</html>
